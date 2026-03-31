@@ -25,9 +25,10 @@ Esta sección detalla los fundamentos de ingeniería aplicados en el **Módulo 1
 
 ### 3.1. Ingeniería de Operaciones (KA 6) y Despliegue
 
-* **Estrategia DEV-TEST-PROD**: Se implementó una separación de entornos para garantizar la estabilidad del SiE. El entorno **DEV** se centró en la configuración de contenedores Podman y PostgreSQL, mientras que **TEST** se utilizó para validar la conectividad de red entre los servicios de Mayan EDMS y Redis.
-* Evidencia de Mecanismo de Rollback (KA 6.3.3):
-Para garantizar la disponibilidad del SiE ante fallos en el despliegue de nuevos esquemas de base de datos, se definió el siguiente procedimiento de reversión basado en contenedores:
+* **Estrategia DEV-TEST-PROD**: Se implementó una separación de entornos para garantizar la estabilidad del SiE.
+* **Evidencia de Mecanismo de Rollback (KA 6.3.3)**: Para garantizar la disponibilidad del SiE ante fallos, se definió el siguiente procedimiento de reversión basado en contenedores:
+
+```bash
 #!/bin/bash
 # Script de Rollback: Restauración de Base de Datos de Admisión
 echo "Iniciando recuperación de Baseline aprobada..."
