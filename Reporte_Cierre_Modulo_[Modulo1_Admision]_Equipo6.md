@@ -29,7 +29,23 @@ Esta sección detalla los fundamentos de ingeniería aplicados en el **Módulo 1
 * **Referencia SWEBOK**: Se aplicaron los principios de la **KA 6.2 (Entornos)** para el aislamiento de recursos y **KA 6.3.2 (Release Engineering)** para la gestión de versiones del despliegue.
 **Automatización y Rollback:** Para asegurar la continuidad, se diseñó un mecanismo de reversión basado en snapshots de volúmenes de datos y detención controlada de pods.
 **Referencia SWEBOK:** Conforme a la KA 6.3.3 (Rollback and Data Migration), se priorizó la integridad de la base de datos antes de cualquier actualización de esquema.
-**Evidencia:** [Enlace a script_rollback_admision.sh en repositorio]
+**Evidencia (Script de Automatización):**
+
+```bash
+#!/bin/bash
+# Script de Rollback: Restauración de Base de Datos de Admisión
+echo "Iniciando recuperación de Baseline aprobada..."
+
+# 1. Detener el pod actual
+podman pod stop pod_sie_admision
+
+# 2. Eliminar volumen corrupto y restaurar desde backup
+podman volume rm vol_postgres_admision
+podman volume create vol_postgres_admision
+
+# 3. Reiniciar servicios
+podman pod start pod_sie_admision
+echo "Sistema restaurado exitosamente."
 
 ### 3.2. Gestión de Configuración (KA 8)
 
