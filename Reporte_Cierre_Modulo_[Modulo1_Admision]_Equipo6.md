@@ -22,12 +22,12 @@ El mayor logro técnico radica en la **traducción de la normativa institucional
 ## 3. Alineación con SWEBOK v4 y Justificación Técnica
 
 Esta sección detalla los fundamentos de ingeniería aplicados en el **Módulo 1: Admisión**, justificando las decisiones técnicas mediante las Áreas de Conocimiento (KA) del SWEBOK v4.
+3.1. Ingeniería de Operaciones (KA 6) y Despliegue
+Estrategia DEV-TEST-PROD: Se implementó una separación de entornos para garantizar la estabilidad del SiE. El entorno DEV se centró en la configuración de contenedores Podman y PostgreSQL.
 
-### 3.1. Ingeniería de Operaciones (KA 6) y Despliegue
+Referencia SWEBOK: Se aplicaron los principios de la KA 6.2 (Entornos) y KA 6.3.2 (Release Engineering).
 
-* **Estrategia DEV-TEST-PROD**: Se implementó una separación de entornos para garantizar la estabilidad del SiE. El entorno **DEV** se centró en la configuración de contenedores Podman y PostgreSQL, mientras que **TEST** se utilizó para validar la conectividad de red entre los servicios de Mayan EDMS y Redis.
-* Evidencia de Mecanismo de Rollback (KA 6.3.3):
-Para garantizar la disponibilidad del SiE ante fallos en el despliegue de nuevos esquemas de base de datos, se definió el siguiente procedimiento de reversión basado en contenedores:
+Evidencia de Mecanismo de Rollback (KA 6.3.3): Para garantizar la disponibilidad del SiE ante fallos, se definió el siguiente procedimiento de reversión:
 #!/bin/bash
 # Script de Rollback: Restauración de Base de Datos de Admisión
 echo "Iniciando recuperación de Baseline aprobada..."
@@ -38,18 +38,16 @@ podman pod stop pod_sie_admision
 # 2. Eliminar volumen de datos corrupto
 podman volume rm vol_postgres_admision
 
-# 3. Restaurar desde el último Snapshot estable (Backup de Seguridad)
+# 3. Restaurar desde el último Snapshot estable
 podman volume create vol_postgres_admision
 podman run --rm -v vol_postgres_admision:/data -v /backups/sie:/backup alpine \
   tar xzf /backup/db_baseline_admision.tar.gz -C /data
 
 # 4. Reiniciar servicios
 podman pod start pod_sie_admision
-echo "Sistema restaurado a la Línea Base (KA 8.2.3)"
-* **Referencia SWEBOK**: Se aplicaron los principios de la **KA 6.2 (Entornos)** para el aislamiento de recursos y **KA 6.3.2 (Release Engineering)** para la gestión de versiones del despliegue.
-**Automatización y Rollback:** Para asegurar la continuidad, se diseñó un mecanismo de reversión basado en snapshots de volúmenes de datos y detención controlada de pods.
-**Referencia SWEBOK:** Conforme a la KA 6.3.3 (Rollback and Data Migration), se priorizó la integridad de la base de datos antes de cualquier actualización de esquema.
-**Evidencia:** [Enlace a script_rollback_admision.sh en repositorio]
+echo "Sistema restaurado exitosamente."
+
+
 
 ### 3.2. Gestión de Configuración (KA 8)
 
